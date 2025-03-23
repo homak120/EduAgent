@@ -1,5 +1,5 @@
 from duckduckgo_search import DDGS
-from agents import Agent, Runner, OpenAIChatCompletionsModel, AsyncOpenAI, function_tool
+from agents import Agent, Runner, OpenAIChatCompletionsModel, AsyncOpenAI, function_tool, RunConfig
 from datetime import datetime
 
 current_date = datetime.now().strftime("%Y-%m-%d")
@@ -43,20 +43,27 @@ edit_news_agent = Agent(
 )
 
 # 3. Run mutlipe agents in a chain
-def run_agents_chain(topic: str):
+def run_search_news_agents_chain(topic: str):
     print("Running agents chain...")
+
+    run_config = RunConfig(workflow_name="Search & Edit News Workflow")
 
     # Run the search new agent
     search_news_result = Runner.run_sync(
         search_news_agent, 
-        topic
+        topic,
+        run_config=run_config
     )
     print("Search news result:", search_news_result.final_output)
 
-    edit_news_result = Runner.run_sync(edit_news_agent, search_news_result.final_output)
+    edit_news_result = Runner.run_sync(
+        edit_news_agent, 
+        search_news_result.final_output,
+        run_config=run_config
+    )
     print("Edit new result:", edit_news_result.final_output)
 
     return edit_news_result.final_output
 
-print(run_agents_chain("Generative AI"))
+#print(run_search_news_agents_chain("Generative AI"))
 
