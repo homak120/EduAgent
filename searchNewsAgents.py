@@ -14,7 +14,7 @@ model = OpenAIChatCompletionsModel(
 def search_news(topic: str) -> str:
     print(f"Searching for news on topic: {topic}")
     with DDGS() as ddgs:
-        results = ddgs.text_search(f"{topic} news {current_date}", max_results=5)
+        results = ddgs.text(f"{topic} news {current_date}", max_results=5)
         if results:
             all_text_results = "\n\n";
             print(f"Found {len(results)} results.")
@@ -22,7 +22,7 @@ def search_news(topic: str) -> str:
                 print(f"Title: {result['title']}")
                 print(f"Link: {result['href']}")
                 print(f"Snippet: {result['body']}")
-                all_text_results = all_text_results + "Title: " + result['title'] + "Link: " + result['href'] + + "Snippet: " + result['body'] + "\n"
+                all_text_results = all_text_results + "Title: " + result['title'] + "\nLink: " + result['href'] + "\nSnippet: " + result['body'] + "\n\n"
             return all_text_results
         else:
             return f"No results found for {topic}."
@@ -38,7 +38,7 @@ search_news_agent = Agent(
 
 edit_news_agent = Agent(
     name="Edit News Assistant",
-    instructions="You are a helpful assistant that edits the news articles.", 
+    instructions="You are a helpful assistant that edits the news articles and make sure adding link of the source at the end of each article.", 
     model=model
 )
 
